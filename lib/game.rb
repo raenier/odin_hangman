@@ -1,5 +1,4 @@
 require_relative 'player'
-require 'awesome_print'
 require 'json'
 require 'Date'
 
