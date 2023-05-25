@@ -23,13 +23,13 @@ class Game
 
     until remaining_turns < 1 || guest_word == correct_guesses
       player_guess = player.give_guest_letter
-      used_letters << player_guess
-
       if correct_letter_guess?(player_guess)
         update_revealed_letters(player_guess)
       else
         self.remaining_turns -= 1
       end
+      used_letters << player_guess
+
 
       update_display
     end
@@ -46,6 +46,7 @@ class Game
   end
 
   def correct_letter_guess?(guest_letter)
+    return false if used_letters.include?(guest_letter)
     (guest_word.include? guest_letter) ? true : false
   end
 
