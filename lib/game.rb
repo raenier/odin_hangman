@@ -65,6 +65,7 @@ class Game
   end
 
   def save_game?
+    return if remaining_turns < 1
     p 'Do you want to save here?'
     return false if gets.chomp.downcase != 'y'
 
