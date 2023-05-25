@@ -15,12 +15,11 @@ class Game
 
   def start
     #ask user if he wants to start
-    puts 'Start game? Y/N:'
-    return if gets.chomp.downcase != 'y'
+    puts 'Load(L) or Start new game(Y)? L/Y/N:'
+    userchoice = gets.chomp.downcase
+    return unless ['y', 'l'].include? userchoice
 
-
-    self.guest_word = get_random_word(File.open('assets/words.txt','r')).split('')
-    self.correct_guesses = Array.new(guest_word.length, '_')
+    userchoice == 'l' ? loadgame : new_game
     p guest_word #remove after finishing
 
     until remaining_turns < 1 || guest_word == correct_guesses
@@ -84,5 +83,31 @@ class Game
           remaining_turns: remaining_turns
         }.to_json
     end
+  end
+
+  def loadgame
+    saved_games = Dir['saved_games/*']
+    return new_game if saved_games.empty?
+
+    p "Choose your saved game, enter corresponding number:"
+    saved_games.each_with_index do |saved, index|
+      p "#{index + 1}: #{saved.split('/').last}"
+    end
+    userinput = gets.chomp.to_i
+    filename = saved_games[userinput - 1]
+
+    File.open(filename, 'r') do |file|
+      parsed = JSON.parse(file.readline)
+      self.guest_word = parsed["guest_word"]
+      self.correct_guesses = parsed["correct_guesses"]
+      self.used_letters = parsed["used_letters"]
+      self.remaining_turns = parsed["remaining_turns"]
+    end
+  end
+
+  def new_game
+    p "Starting a NEW GAME!"
+    self.guest_word = get_random_word(File.open('assets/words.txt','r')).split('')
+    self.correct_guesses = Array.new(guest_word.length, '_')
   end
 end
