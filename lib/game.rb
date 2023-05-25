@@ -59,9 +59,17 @@ class Game
 
   def update_display
     system('clear') || system('cls')
-    p remaining_turns
-    p used_letters
+    display_hangman(remaining_turns)
     p correct_guesses.join(' ')
+  end
+
+  def display_hangman(remaining_turns)
+    return if remaining_turns == 7
+    stickman = [" |-----~\\|-\n"," O\n", "/", "|", "\\\n", "/", " \\\n"]
+
+    displayindex = 7 - remaining_turns
+
+    puts stickman.slice(0, displayindex).join()
   end
 
   def save_game?
