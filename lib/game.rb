@@ -1,5 +1,7 @@
 require_relative 'player'
 require 'awesome_print'
+require 'json'
+require 'Date'
 
 class Game
   attr_accessor :guest_word, :player, :used_letters, :remaining_turns, :correct_guesses
@@ -30,8 +32,8 @@ class Game
       end
       used_letters << player_guess
 
-
       update_display
+      save_game? ? break : next
     end
   end
 
@@ -61,5 +63,26 @@ class Game
     p remaining_turns
     p used_letters
     p correct_guesses.join(' ')
+  end
+
+  def save_game?
+    p 'Do you want to save here?'
+    return false if gets.chomp.downcase != 'y'
+
+    save_to_file(DateTime.now.strftime('%y-%h-%d_%H:%M'))
+    true
+  end
+
+  def save_to_file(filename)
+    Dir.mkdir('saved_games') unless Dir.exists?('saved_games')
+
+    File.open("saved_games/#{filename}", 'w') do |file|
+      file <<
+        { guest_word: guest_word,
+          correct_guesses: correct_guesses,
+          used_letters: used_letters,
+          remaining_turns: remaining_turns
+        }.to_json
+    end
   end
 end
